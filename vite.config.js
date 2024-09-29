@@ -37,7 +37,7 @@ export default defineConfig({
                     '@/stores/testing': ['useTestingStore'],
                     '@vueuse/core': [''],
                     '@vuelidate/core': [['default', 'useVuelidate']],
-                    '@vuelidate/validators': ['email', 'required', 'sameAs', 'minLength', 'maxLength', 'numeric'],
+                    '@vuelidate/validators': ['email', 'required', 'sameAs', 'minLength', 'maxLength', 'numeric', 'minValue', 'maxValue', 'between'],
                 }
             ]
         })
