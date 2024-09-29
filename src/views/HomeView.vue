@@ -2,9 +2,6 @@
 
 <template>
     <main class="p-5">
-
-        <button>testbutton</button>
-
         <main>
             <div class="w-fit">home</div>
         </main>
@@ -16,7 +13,7 @@
             <x-button @clicked="state.isOpen = true">Open Modal</x-button>
             <comp-modal :isOpen="state.isOpen" @close="state.isOpen = false" @confirm="state.isOpen = false" swapButtons
                 title="Custom Title">
-                <p>This is the modal content. You can put anything here.</p>
+                <img src="@/assets/logo.svg" alt="logo" class="w-20 h-20" />
             </comp-modal>
         </main>
 

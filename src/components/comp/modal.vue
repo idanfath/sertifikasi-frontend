@@ -11,7 +11,9 @@
                     </slot>
                 </div>
                 <div class="modal-content">
-                    <slot></slot>
+                    <slot>
+                        <!-- Default content, override by placing content here -->
+                    </slot>
                 </div>
                 <div class="modal-footer flex gap-1" :class="{ 'flex-row-reverse': alignLeft }">
                     <x-button secondary @clicked="closeModal('cancel')"
