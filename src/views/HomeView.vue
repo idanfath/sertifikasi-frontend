@@ -2,6 +2,9 @@
 
 <template>
     <main class="p-5">
+
+        <button>testbutton</button>
+
         <main>
             <div class="w-fit">home</div>
         </main>
@@ -24,6 +27,7 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
@@ -41,12 +45,7 @@ export default {
     },
     methods: {
         showToast() {
-            this.$toast.add({
-                severity: 'error',
-                summary: 'Success',
-                detail: 'Message Content',
-                life: 3000,
-            });
+            uptoast().preset('success')
         },
     },
 }

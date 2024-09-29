@@ -1,3 +1,4 @@
+
 /**
  * @file core.js
  * @description This file contains core functions of helpers

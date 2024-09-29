@@ -47,6 +47,7 @@
 </style>
 
 <script>
+
 import axios from 'axios';
 
 export default {
@@ -112,4 +113,5 @@ export default {
         await this.fetchData();
     }
 }
+
 </script>

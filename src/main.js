@@ -62,6 +62,9 @@ app.use(PrimeVue, {
 app.use(ConfirmationService)
 app.use(ToastService)
 
+// export global properties to be used in js files
+export const globals = app.config.globalProperties
+
 // onrefresh data getters
 import getLocalData from './stores/subscriber/onrefresh'
 

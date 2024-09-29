@@ -1,5 +1,5 @@
 import { storageLink } from "../axios/config";
-import fallbackImage from "@/assets/images/logo.svg";
+import fallbackImage from "@/assets/logo.svg";
 
 /**
  * App data
