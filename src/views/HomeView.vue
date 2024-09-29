@@ -32,12 +32,6 @@ export default {
             state: {
                 isOpen: false
             },
-            form: {
-                name: '',
-                email: '',
-                password: '',
-                password_confirmation: ''
-            },
         }
     },
     methods: {
