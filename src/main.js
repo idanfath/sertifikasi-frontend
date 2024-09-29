@@ -9,6 +9,7 @@
 
 // styles
 import './assets/main.css'
+import 'primeicons/primeicons.css'
 
 /**
  * Main entry point for the Vue application.
@@ -63,7 +64,6 @@ app.use(ToastService)
 
 // onrefresh data getters
 import getLocalData from './stores/subscriber/onrefresh'
-
 
 /**
  * Mounts the Vue application after getting local data.

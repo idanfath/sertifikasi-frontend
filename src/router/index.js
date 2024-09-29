@@ -12,7 +12,6 @@ import mainShell from '@/shell/mainShell.vue'
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
-
         {
             path: '/',
             meta: { shell: true },

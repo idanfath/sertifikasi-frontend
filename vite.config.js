@@ -32,12 +32,12 @@ export default defineConfig({
                 'pinia',
                 {
                     'axios': [['default', 'axios']],
-                    '@/modules/core': ['core_test'],
+                    '@/modules/core': ['uptoast', 'mstr', 'upconfirm', 'coreTesting'],
                     '@/configs/appdata': [['default', 'appdata']],
                     '@/stores/testing': ['useTestingStore'],
                     '@vueuse/core': [''],
                     '@vuelidate/core': [['default', 'useVuelidate']],
-                    '@vuelidate/validators': ['email', 'required', 'sameAs', 'minLength', 'maxLength'],
+                    '@vuelidate/validators': ['email', 'required', 'sameAs', 'minLength', 'maxLength', 'numeric'],
                 }
             ]
         })

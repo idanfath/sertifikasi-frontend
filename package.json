@@ -12,7 +12,6 @@
         "new:file": "node ./scripts/newfile.js",
         "new:comp": "node ./scripts/newcomp.js",
         "new:style": "node ./scripts/newstyle.js",
-        "router:check": "node ./scripts/routercheck.js",
         "install:tailwind": "node ./scripts/init-tailwind.js",
         "uninstall:tailwind": "node ./scripts/init-tailwind-uninstall.js"
     },
@@ -27,6 +26,7 @@
         "dotenv": "^16.4.5",
         "lucide-vue-next": "^0.439.0",
         "pinia": "^2.1.7",
+        "primeicons": "^7.0.0",
         "primevue": "^4.0.7",
         "quill": "^2.0.2",
         "unplugin-auto-import": "^0.18.2",

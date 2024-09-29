@@ -20,6 +20,8 @@ const modes = {
     },
 }
 
+export const storageLink = modes[import.meta.env.VITE_API_MODE].baseURL + '/storage/'
+
 /**
  * Configures Axios with the specified mode settings.
  *
@@ -31,7 +33,7 @@ export default function useAxiosConfig(mode) {
     if (!selectedMode) {
         throw new Error(`Mode ${mode} is not defined in modes`);
     }
-    axios.defaults.baseURL = selectedMode.baseURL
+    axios.defaults.baseURL = selectedMode.baseURL + '/api';
     axios.defaults.headers = {
         ...selectedMode.headers || {},
         'Content-Type': 'application/json',

@@ -1,3 +1,6 @@
+import { storageLink } from "../axios/config";
+import fallbackImage from "@/assets/images/logo.svg";
+
 /**
  * App data
  * @type {Object}
@@ -6,4 +9,6 @@
  */
 export default {
     title: import.meta.env.VITE_APP_TITLE,
+    storageLink,
+    fallbackImage
 }
