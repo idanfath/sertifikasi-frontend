@@ -42,7 +42,7 @@ export default {
     },
     methods: {
         showToast() {
-            uptoast().preset('success')
+            uptoast(this.$toast).preset('success')
         },
     },
 }
