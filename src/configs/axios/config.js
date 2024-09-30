@@ -35,6 +35,7 @@ export default function useAxiosConfig(mode) {
     }
     axios.defaults.baseURL = selectedMode.baseURL + '/api';
     axios.defaults.headers = {
+        ...axios.defaults.headers,
         ...selectedMode.headers || {},
         'Content-Type': 'application/json',
         'Accept': 'application/json',
