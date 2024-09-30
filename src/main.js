@@ -62,9 +62,16 @@ app.use(PrimeVue, {
 app.use(ConfirmationService)
 app.use(ToastService)
 
-// onrefresh data getters
-import getLocalData from './stores/subscriber/onrefresh'
+import useSubscriber from './stores/subscriber'
+/**
+ * Sets up the subscriber for the Vue application.
+ *
+ * @function useSubscriber
+ * @description Initializes the subscriber for the Vue application.
+ */
+useSubscriber()
 
+import getLocalData from './stores/subscriber/onrefresh'
 /**
  * Mounts the Vue application after getting local data.
  *
@@ -76,12 +83,3 @@ getLocalData().then(() => {
     app.mount('#app')
 })
 
-import useSubscriber from './stores/subscriber'
-
-/**
- * Sets up the subscriber for the Vue application.
- *
- * @function useSubscriber
- * @description Initializes the subscriber for the Vue application.
- */
-useSubscriber()
