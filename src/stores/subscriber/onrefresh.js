@@ -16,10 +16,7 @@ import { useTestingStore } from "../testing";
  *  app.mount('#app')
  * }
  */
-export default function getLocalData() {
-    return new Promise((resolve) => {
-        useTestingStore().count = JSON.parse(localStorage.getItem('useTestingStore')) || 0;
-        console.log('From store/subscriber/onrefresh | Getting local data');
-        resolve();
-    });
+export default async function getLocalData() {
+    useTestingStore().count = JSON.parse(localStorage.getItem('useTestingStore')) || 0;
+    console.log('From store/subscriber/onrefresh | Getting local data');
 }
