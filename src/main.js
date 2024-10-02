@@ -82,4 +82,3 @@ import getLocalData from './stores/subscriber/onrefresh'
 getLocalData().then(() => {
     app.mount('#app')
 })
-

@@ -17,14 +17,6 @@
                         </li>
                     </ul>
                 </div>
-                <button class="menu-toggle" @click="toggleMenu">
-                    <abbr class="sr-only">Toggle menu</abbr>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        class="menu-icon">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16m-7 6h7" />
-                    </svg>
-                </button>
             </nav>
         </div>
     </header>
@@ -42,14 +34,11 @@ export default {
                 { text: 'Home', name: 'home' },
                 { text: 'About', name: 'about' },
                 { text: 'Login', name: 'login' },
+                { text: 'Item', name: 'item' },
             ],
-            isMenuOpen: false,
         }
     },
     methods: {
-        toggleMenu() {
-            this.isMenuOpen = !this.isMenuOpen
-        },
     },
 }
 </script>
@@ -105,9 +94,6 @@ export default {
     @apply text-black;
 }
 
-.menu-toggle {
-    @apply md:hidden focus:outline-none;
-}
 
 .menu-icon {
     @apply h-6 w-6 text-gray-800;

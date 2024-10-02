@@ -17,10 +17,10 @@ export default function useInterceptors() {
             return response;
         },
         error => {
-            if (error.response && error.response.status === 404) {
-                console.log('404, redirecting to home');
-                router.push({ name: 'home' });
-            }
+            // if (error.response && error.response.status === 404) {
+            //     console.log('404, redirecting to home');
+            //     router.push({ name: 'home' });
+            // }
             return Promise.reject(error);
         }
     );

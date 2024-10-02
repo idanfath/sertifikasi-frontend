@@ -35,6 +35,7 @@ export default defineConfig({
                     '@/modules/core': ['uptoast', 'mstr', 'upconfirm', 'coreTesting'],
                     '@/configs/appdata': [['default', 'appdata']],
                     '@/stores/testing': ['useTestingStore'],
+                    '@/stores/auth': ['useAuthStore'],
                     '@vueuse/core': [''],
                     '@vuelidate/core': [['default', 'useVuelidate']],
                     '@vuelidate/validators': ['email', 'required', 'sameAs', 'minLength', 'maxLength', 'numeric', 'minValue', 'maxValue', 'between'],

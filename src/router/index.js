@@ -6,15 +6,18 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import appdata from '@/configs/appdata'
 import mainShell from '@/shell/mainShell.vue'
+import ItemView from '@/views/ItemView.vue'
+import { useAuthStore } from '@/stores/auth'
 /**
  * Create a new router instance.
  */
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
+
         {
             path: '/',
-            meta: { shell: true },
+            meta: { shell: true, auth: true },
             component: mainShell,
             children: [
                 {
@@ -30,7 +33,12 @@ export const router = createRouter({
                     // this generates a separate chunk (About.[hash].js) for this route
                     // which is lazy-loaded when the route is visited.
                     component: () => import('../views/AboutView.vue'),
-                }
+                },
+                {
+                    path: "item",
+                    name: "item",
+                    component: ItemView
+                },
             ]
         },
         {
@@ -49,9 +57,16 @@ export const router = createRouter({
 /**
  * This function is called before every route change.
  */
+
+
 router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore()
     document.title = `${to.name} - ${appdata.title}`
     console.log('From router/index.js | Navigating to:', to.name)
+    if (to.meta.auth && !authStore.isAuth) {
+        next({ name: 'login' })
+        return
+    }
     next()
 })
 

@@ -63,7 +63,6 @@ export default {
     methods: {
         closeModal(from) {
             if (this.persistent && from === 'backdrop') {
-                console.log('Persistent modal cannot be closed by clicking outside');
                 return;
             }
 

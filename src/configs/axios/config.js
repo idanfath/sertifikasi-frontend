@@ -33,7 +33,7 @@ export default function useAxiosConfig(mode) {
     if (!selectedMode) {
         throw new Error(`Mode ${mode} is not defined in modes`);
     }
-    axios.defaults.baseURL = selectedMode.baseURL + '/api';
+    axios.defaults.baseURL = selectedMode.baseURL + '/api/v1';
     axios.defaults.headers = {
         ...axios.defaults.headers,
         ...selectedMode.headers || {},
