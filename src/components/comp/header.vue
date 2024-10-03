@@ -15,6 +15,13 @@
                                 </span>
                             </router-link>
                         </li>
+                        <li v-if="authStore.isAuth">
+                            <p @click="onLogout" class="nav-link my-bezier cursor-pointer">
+                                <span>
+                                    Logout
+                                </span>
+                            </p>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -25,20 +32,28 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth';
+
 export default {
     name: 'comp-header',
     data() {
         return {
             appdata,
+            authStore: useAuthStore(),
             navLinks: [
                 { text: 'Home', name: 'home' },
-                { text: 'About', name: 'about' },
-                { text: 'Login', name: 'login' },
                 { text: 'Item', name: 'item' },
+                { text: 'Transaction', name: 'transaction' },
             ],
         }
     },
     methods: {
+        onLogout() {
+            useAuthStore().logout().then((res) => {
+                this.$router.replace({ name: 'login' })
+
+            })
+        }
     },
 }
 </script>

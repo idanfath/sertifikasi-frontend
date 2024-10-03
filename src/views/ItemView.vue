@@ -1,4 +1,13 @@
 <template>
+    <div class="flex flex-col w-fit mb-3">
+        <p class="text-xl font-semibold">Add Item</p>
+        <InputText v-model="form.name" placeholder="Masukkan nama" />
+        <InputNumber v-model="form.stock" :min="0" :useGrouping="false" placeholder="Masukkan stock" />
+        <InputNumber v-model="form.price" :min="0" placeholder="Masukkan harga" />
+        <InputText v-model="form.sku" :min="0" :useGrouping="false" placeholder="Masukkan sku" />
+        <x-button useLoading :disabled="v$.form.$invalid" @clicked="addData">Add</x-button>
+    </div>
+
     <Toolbar>
         <template #start>
             <Button :label="table._select ? 'Hapus' : 'Pilih Item'"
@@ -39,8 +48,18 @@
             <div class="center">Empty</div>
         </template>
     </DataTable>
+
+    <comp-modal :isOpen="table.edit._editmode" title="Edit Data" @close="toggleEditMode" @confirm="commitEdit">
+        <InputText v-model="table.edit.edit.name" placeholder="Masukkan nama" />
+        <InputNumber v-model="table.edit.edit.stock" :min="0" :useGrouping="false" placeholder="Masukkan stock" />
+        <InputNumber v-model="table.edit.edit.price" :min="0" placeholder="Masukkan harga" />
+        <InputText v-model="table.edit.edit.sku" :min="0" :useGrouping="false" placeholder="Masukkan sku" />
+    </comp-modal>
 </template>
 <script>
+import { minLength, minValue } from '@vuelidate/validators';
+import InputText from 'primevue/inputtext';
+
 export default {
     name: 'Item',
     data() {
@@ -50,7 +69,7 @@ export default {
                     items: []
                 },
                 edit: {
-                    _editmode: true,
+                    _editmode: false,
                     edit: {},
                 },
                 search: '',
@@ -62,8 +81,25 @@ export default {
                     { field: 'stock', header: 'Stock' },
                     { field: 'sku', header: 'SKU' },
                     { field: 'price', header: 'Harga' },
-                ]
+                ],
             },
+            form: {
+                name: '',
+                stock: 1,
+                sku: '',
+                price: 1000,
+            },
+            v$: useVuelidate()
+        }
+    },
+    validations() {
+        return {
+            form: {
+                name: { required, minLength: minLength(3) },
+                stock: { required, minValue: minValue(1) },
+                sku: { required, minLength: minLength(3) },
+                price: { required, minValue: minValue(1000) },
+            }
         }
     },
     methods: {
@@ -89,9 +125,46 @@ export default {
             }
             upconfirm(this.$confirm, event, accept, reject);
         },
+        toggleEditMode(data) {
+            if (this.table.edit._editmode) {
+                this.table.edit._editmode = false
+                this.table.edit.edit = {}
+                return
+            }
+            this.table.edit._editmode = true
+            this.table.edit.edit = { ...data }
+        },
+        commitEdit() {
+            axios.put(`item/${this.table.edit.edit.id}`, this.table.edit.edit).then(() => {
+                this.onLoad()
+                this.table.edit.edit = {}
+            })
+        },
+        addData(ResolveLoading) {
+            axios.post('item', this.form).then((res) => {
+                console.log(res)
+                this.onLoad()
+                this.form = {}
+            }).finally(() => {
+                ResolveLoading()
+            })
+        }
+
     },
     mounted() {
+        this.v$.$touch()
         this.onLoad()
+    },
+    watch: {
+        'table.search': {
+            handler: function (val) {
+                clearTimeout(this.debounceTimeout);
+                this.debounceTimeout = setTimeout(() => {
+                    this.onLoad(1, val)
+                }, 500);
+            },
+            deep: true,
+        },
     },
 };
 </script>

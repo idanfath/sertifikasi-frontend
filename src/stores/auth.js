@@ -22,7 +22,7 @@ export const useAuthStore = defineStore('auth', {
     }),
     getters: {
         isAdmin() {
-            return this.USER.role || undefined
+            return !!this.USER.role || undefined
         },
         isAuth() {
             return this.TOKEN ? true : false
@@ -52,6 +52,10 @@ export const useAuthStore = defineStore('auth', {
             } catch (error) {
                 this.resetAll()
             }
+        },
+        async logout() {
+            await axios.post('auth/logout')
+            this.resetAll()
         }
     }
 })
