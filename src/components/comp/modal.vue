@@ -1,7 +1,7 @@
 <template>
     <transition name="modal-fade">
         <div v-if="isOpen" class="modal-overlay" @click="closeModal('backdrop')">
-            <div class="modal-container" @click.stop>
+            <div class="modal-container" :class="modalClass" @click.stop>
                 <div class="modal-header">
                     <slot name="header">
                         <h2 class="modal-title">{{ title }}</h2>
@@ -16,9 +16,10 @@
                     </slot>
                 </div>
                 <div class="modal-footer flex gap-1" :class="{ 'flex-row-reverse': alignLeft }">
-                    <x-button secondary @clicked="closeModal('cancel')"
-                        :class="{ 'order-2': swapButtons }">Cancel</x-button>
-                    <x-button @clicked="confirmAction">Confirm</x-button>
+                    <x-button v-if="!hideCancel" secondary @clicked="closeModal('cancel')"
+                        :class="{ 'order-2': swapButtons }">{{ closeLabel }}</x-button>
+                    <x-button v-if="!hideConfirm" :disabled="disabledConfirm" @clicked="confirmAction">{{ confirmLabel
+                        }}</x-button>
                 </div>
             </div>
         </div>
@@ -35,6 +36,10 @@ export default {
         X
     },
     props: {
+        modalClass: {
+            type: String,
+            default: ''
+        },
         isOpen: {
             type: Boolean,
             required: true
@@ -51,11 +56,31 @@ export default {
             type: Boolean,
             default: false
         },
+        hideCancel: {
+            type: Boolean,
+            default: false
+        },
+        hideConfirm: {
+            type: Boolean,
+            default: false
+        },
+        confirmLabel: {
+            type: String,
+            default: 'Confirm'
+        },
         hideClose: {
             type: Boolean,
             default: false
         },
+        closeLabel: {
+            type: String,
+            default: 'Close'
+        },
         persistent: {
+            type: Boolean,
+            default: false
+        },
+        disabledConfirm: {
             type: Boolean,
             default: false
         }
@@ -86,7 +111,7 @@ export default {
 }
 
 .modal-container {
-    @apply bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden transform transition-all duration-300 ease-out;
+    @apply bg-white rounded-lg shadow-xl w-full max-w-md mx-4 max-h-screen overflow-hidden overflow-y-scroll transform transition-all duration-300 ease-out;
 }
 
 .modal-header {

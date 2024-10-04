@@ -3,6 +3,7 @@
     <ConfirmDialog class="lg:hidden" group="dialog" />
     <Toast />
     <RouterView />
+
 </template>
 
 <script>

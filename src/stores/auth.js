@@ -21,12 +21,12 @@ export const useAuthStore = defineStore('auth', {
         USER: null,
     }),
     getters: {
-        isAdmin() {
-            return !!this.USER.role || undefined
-        },
-        isAuth() {
-            return this.TOKEN ? true : false
-        }
+        // isAdmin() {
+        //     return !!this.USER.role === "admin" || undefined
+        // },
+        isAdmin: (state) => state.USER?.role === 'admin',
+        isAuth: (state) => !!state.TOKEN,
+        getUser: (state) => state.USER,
     },
     actions: {
         resetAll() {
@@ -40,6 +40,7 @@ export const useAuthStore = defineStore('auth', {
             return response
         },
         async attempt(token) {
+            console.log('attempting')
             if (token) this.TOKEN = token
             if (!this.TOKEN) {
                 this.resetAll()
@@ -56,6 +57,15 @@ export const useAuthStore = defineStore('auth', {
         async logout() {
             await axios.post('auth/logout')
             this.resetAll()
+            return
+        },
+        register(credentials) {
+            return axios.post('auth/register', credentials)
+        },
+        async updateProfile(data) {
+            const response = await axios.put(`user/${this.USER.id}`, data)
+            this.USER = response.data.data
+            return response
         }
     }
 })

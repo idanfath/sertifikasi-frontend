@@ -13,8 +13,20 @@ export const mstr = (str) => {
                 return str.charAt(0).toUpperCase() + str.slice(1)
             }
         },
+        slugify(text) {
+            return text
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, '-')         // Replace spaces with -
+                .replace(/[^\w-]+/g, '')       // Remove all non-word chars
+                .replace(/--+/g, '-')          // Replace multiple - with single -
+                .replace(/^-+/, '')            // Trim - from start of text
+                .replace(/-+$/, '')            // Trim - from end of text
+        },
     }
 }
+
 
 export const uptoast = (toast, severity, detail, summary = severity, life = 3000) => {
     if (!toast) return
@@ -26,14 +38,14 @@ export const uptoast = (toast, severity, detail, summary = severity, life = 3000
             preset: (options) => {
                 switch (options) {
                     case 'error':
-                        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Terjadi kesalahan', life })
+                        toast.add({ severity: 'error', summary: 'Failed', detail: 'Action Failed', life })
                         break;
                     case 'cancel':
-                        toast.add({ severity: 'warn', summary: 'Dibatalkan', detail: 'Aksi dibatalkan', life })
+                        toast.add({ severity: 'warn', summary: 'Canceled', detail: 'Action canceled', life })
                         break;
                     case 'success':
                     default:
-                        toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Aksi sukses dijalankan', life })
+                        toast.add({ severity: 'success', summary: 'Success', detail: 'Action success', life })
                         break;
                 }
             }
@@ -45,11 +57,11 @@ export const upconfirm = (confirm, event, acceptCallBack = (() => { }), rejectCa
     confirm.require({
         target: event.currentTarget,
         icon: 'pi pi-exclamation-triangle',
-        acceptProps: { label: 'Ya', severity: 'success' },
-        rejectProps: { label: 'Tidak', severity: 'danger' },
+        acceptProps: { label: 'Yes', severity: 'success' },
+        rejectProps: { label: 'Cancel', severity: 'danger' },
         group: window.innerWidth < 1024 ? 'dialog' : 'popup',
-        header: header || 'Konfirmasi',
-        message: message || 'Apakah anda yakin?',
+        header: header || 'Confirm',
+        message: message || 'Are you sure?',
         accept: acceptCallBack,
         reject: rejectCallBack,
     })

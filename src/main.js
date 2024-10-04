@@ -36,6 +36,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura';
+import { MotionPlugin } from '@vueuse/motion';
 
 /**
  * Initializes the Vue application.
@@ -45,7 +46,6 @@ import Aura from '@primevue/themes/aura';
  */
 const app = createApp(App)
 app.use(createPinia())
-app.use(router)
 app.use(PrimeVue, {
     theme: {
         preset: Aura,
@@ -61,6 +61,7 @@ app.use(PrimeVue, {
 })
 app.use(ConfirmationService)
 app.use(ToastService)
+app.use(MotionPlugin)
 
 import useSubscriber from './stores/subscriber'
 /**
@@ -80,5 +81,6 @@ import getLocalData from './stores/subscriber/onrefresh'
  * @returns {Promise} A promise that resolves when local data is fetched.
  */
 getLocalData().then(() => {
+    app.use(router) //TERNYATA HARUS TARO SINI COKKK BIAR GAK ERROR AOWKDOAWKDOAWKDOAWKDOAWKDA
     app.mount('#app')
 })

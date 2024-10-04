@@ -9,14 +9,18 @@ import mainShell from '@/shell/mainShell.vue'
 import ItemView from '@/views/ItemView.vue'
 import { useAuthStore } from '@/stores/auth'
 import TransactionView from '@/views/TransactionView.vue'
+import AdditemView from '@/views/additemView.vue'
+import AddtransactionView from '@/views/addtransactionView.vue'
+import { mstr } from '@/modules/core'
+import RegisterView from '@/views/registerView.vue'
+import getLocalData from '@/stores/subscriber/onrefresh'
+import UsersView from '@/views/usersView.vue'
 /**
  * Create a new router instance.
  */
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
-
-
         {
             path: '/',
             meta: { shell: true, auth: true },
@@ -25,12 +29,11 @@ export const router = createRouter({
                 {
                     path: '',
                     name: 'home',
-                    // dont lazy-load frequently visited or important routes, as it may cause a delay when navigating
                     component: HomeView
                 },
                 {
                     path: "item",
-                    name: "item",
+                    name: "products",
                     component: ItemView
                 },
                 {
@@ -38,11 +41,34 @@ export const router = createRouter({
                     name: "transaction",
                     component: TransactionView
                 },
+                {
+                    path: "transaction/add",
+                    name: "add transaction",
+                    component: AddtransactionView
+                },
+                {
+                    path: "item/add",
+                    name: "add products",
+                    component: AdditemView
+                },
+                {
+                    path: "users/add",
+                    name: "register",
+                    meta: { admin: true },
+                    component: RegisterView
+                },
+                {
+                    path: "users",
+                    name: "users",
+                    meta: { admin: true },
+                    component: UsersView
+                },
             ]
         },
         {
             path: "/login",
             name: "login",
+            meta: { noAuth: true },
             component: () => import('../views/loginView.vue')
         },
         {
@@ -58,12 +84,22 @@ export const router = createRouter({
  */
 
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore()
-    document.title = `${to.name} - ${appdata.title}`
+    console.log(authStore)
+    document.title = `${mstr(to.name).capitalize(true)} - ${appdata.title}`
     console.log('From router/index.js | Navigating to:', to.name)
+
     if (to.meta.auth && !authStore.isAuth) {
-        next({ name: 'login' })
+        next({ name: 'login', query: { redirect: to.fullPath } })
+        return
+    }
+    if (to.meta.noAuth && authStore.isAuth) {
+        next({ name: 'home' })
+        return
+    }
+    if (to.meta.admin && !authStore.isAdmin) {
+        next({ name: 'home' })
         return
     }
     next()

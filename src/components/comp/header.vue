@@ -48,11 +48,9 @@ export default {
         }
     },
     methods: {
-        onLogout() {
-            useAuthStore().logout().then((res) => {
-                this.$router.replace({ name: 'login' })
-
-            })
+        async onLogout() {
+            await this.$router.replace({ name: 'login' })
+            useAuthStore().logout()
         }
     },
 }
