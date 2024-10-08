@@ -99,16 +99,31 @@
                 <StepPanel v-slot="{ activateCallback }">
                     <div class="flex flex-col  gap-1.5">
                         <div class="max-w-[400px] py-3 px-5 border-2  rounded bg-surface-50 dark:bg-surface-950">
+
                             <div class="flex  justify-between ">
-                                <div class="font-semibold">Total</div>
+                                <div class="font-semibold">{{ couponApplied ? 'Subtotal' : 'Total' }}</div>
                                 <div>{{ Intl.NumberFormat('id-ID', {
                                     style: 'currency', currency: 'IDR'
                                 }).format(totalSum) }}</div>
                             </div>
+                            <div v-if="couponApplied" class="flex  justify-between ">
+                                <div class="font-semibold">Discount</div>
+                                <div>{{ Intl.NumberFormat('id-ID', {
+                                    style: 'currency', currency: 'IDR'
+                                }).format(discount) }}</div>
+                            </div>
+                            <div v-if="couponApplied" class="flex justify-between ">
+                                <div class="font-semibold">Total</div>
+                                <div>{{ Intl.NumberFormat('id-ID', {
+                                    style: 'currency', currency: 'IDR'
+                                }).format(totalSum - discount) }}</div>
+                            </div>
+
                             <div class="flex  justify-between ">
                                 <div class="font-semibold">Cashier</div>
                                 <div>{{ authStore.getUser.username }}</div>
                             </div>
+
                         </div>
                         <Fieldset legend="Items" :toggleable="true">
                             <DataTable stripedRows showGridlines :value="selected_items" size="small" class="mt-2">
@@ -147,6 +162,23 @@
                             </InputGroupAddon>
                             <InputNumber v-model="paidAmount" mode="currency" currency="IDR" locale="id-ID" showButtons
                                 buttonLayout="horizontal" :step="1000" :min="totalSum" placeholder="Paid Amount" />
+                        </InputGroup>
+                        <p class="font-semibold">Coupon</p>
+                        <InputGroup>
+                            <InputGroupAddon>
+                                <i class="pi pi-tag" />
+                            </InputGroupAddon>
+                            <InputGroupAddon v-if="!couponApplied"
+                                :class="couponApplied ? 'disabled' : 'cursor-pointer group hover:bg-green-50 transition-all duration-300'"
+                                @click="tryApply">
+                                <p class="group-hover:text-primary-500 group-hover:underline">Apply</p>
+                            </InputGroupAddon>
+                            <InputGroupAddon v-else
+                                class="cursor-pointer group hover:bg-green-50 transition-all duration-300"
+                                @click="removeCoupon">
+                                <p class="group-hover:text-primary-500 group-hover:underline">Remove</p>
+                            </InputGroupAddon>
+                            <InputText :disabled="couponApplied" placeholder="Coupon Code" v-model="coupon" />
                         </InputGroup>
                         <div class="py-3 px-5 border-2 flex flex-col gap-2  rounded bg-surface-50 dark:bg-surface-950">
                             <p class="font-semibold">Increase</p>
@@ -190,10 +222,22 @@
                                 }}</div>
                             </div>
                             <div class="flex  justify-between ">
-                                <div class="font-semibold">Total</div>
+                                <div class="font-semibold">{{ couponApplied ? 'Subtotal' : 'Total' }}</div>
                                 <div>{{ Intl.NumberFormat('id-ID', {
                                     style: 'currency', currency: 'IDR'
                                 }).format(totalSum) }}</div>
+                            </div>
+                            <div v-if="couponApplied" class="flex  justify-between ">
+                                <div class="font-semibold">Discount</div>
+                                <div>{{ Intl.NumberFormat('id-ID', {
+                                    style: 'currency', currency: 'IDR'
+                                }).format(discount) }}</div>
+                            </div>
+                            <div v-if="couponApplied" class="flex justify-between ">
+                                <div class="font-semibold">Total</div>
+                                <div>{{ Intl.NumberFormat('id-ID', {
+                                    style: 'currency', currency: 'IDR'
+                                }).format(totalSum - discount) }}</div>
                             </div>
                             <div class="flex  justify-between ">
                                 <div class="font-semibold">Cashier</div>
@@ -207,9 +251,10 @@
                             </div>
                             <div class="flex  justify-between ">
                                 <div class="font-semibold">Change</div>
-                                <div>{{ Intl.NumberFormat('id-ID', {
-                                    style: 'currency', currency: 'IDR'
-                                }).format(Math.floor((paidAmount - totalSum) / 100) * 100) }}</div>
+                                <div>{{ Intl.NumberFormat('id-ID',
+                                    {
+                                        style: 'currency', currency: 'IDR'
+                                    }).format(Math.floor((paidAmount - (totalSum - discount)) / 100) * 100) }}</div>
                             </div>
                         </div>
                     </div>
@@ -235,6 +280,9 @@ export default {
             items: [],
             selected_items: [],
             paidAmount: 0,
+            coupon: '',
+            discount: 0,
+            couponApplied: false,
         }
     },
     computed: {
@@ -246,6 +294,29 @@ export default {
         }
     },
     methods: {
+        removeCoupon() {
+            this.couponApplied = false;
+            this.discount = 0;
+        },
+        tryApply() {
+            if (!this.coupon) return;
+            axios.get(`/coupon/check`, {
+                params: {
+                    code: this.coupon,
+                    items: this.selected_items,
+                    paid: this.paidAmount,
+                }
+            }).then((response) => {
+                this.couponApplied = true;
+                this.discount = response.data.discount;
+            }).catch((er) => {
+                try {
+                    uptoast(this.$toast, 'error', er.response.data.message, er.response.data.summary);
+                } catch (error) {
+                    uptoast(this.$toast).preset('error')
+                }
+            });
+        },
         confirmSwitchPage(page, event) {
             const redirectTo = () => {
                 this.$router.push({ name: page });
@@ -263,6 +334,7 @@ export default {
                 const data = {
                     items: this.selected_items,
                     paid_amount: this.paidAmount,
+                    coupon: this.couponApplied ? this.coupon : null,
                 }
 
                 axios.post('/transaction', data)
@@ -300,7 +372,18 @@ export default {
             },
             deep: true,
         },
+        'coupon': {
+            handler: function (val) {
+                this.coupon = val.toUpperCase()
+            },
+        }
     },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.disabled {
+    cursor: not-allowed;
+    background-color: #e0e0e0;
+    color: #9e9e9e;
+}
+</style>

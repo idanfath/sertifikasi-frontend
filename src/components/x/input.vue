@@ -69,11 +69,11 @@ export default {
 
 <style scoped>
 .input-container {
-    @apply w-full flex items-center border-[1px] rounded-md border-gray-300 transition-colors duration-300 ease-in-out;
+    @apply bg-white w-full flex items-center border rounded-md border-gray-300 transition-colors duration-300 ease-in-out;
 }
 
 .input-container:focus-within {
-    @apply border-black;
+    @apply border-neutral-700;
 }
 
 .custom-input {

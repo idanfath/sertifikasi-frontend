@@ -55,12 +55,12 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         async logout() {
-            await axios.post('auth/logout')
+            axios.post('auth/logout').catch((e) => { })
             this.resetAll()
             return
         },
         register(credentials) {
-            return axios.post('auth/register', credentials)
+            return axios.post('admin/register', credentials)
         },
         async updateProfile(data) {
             const response = await axios.put(`user/${this.USER.id}`, data)

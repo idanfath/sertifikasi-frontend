@@ -21,3 +21,7 @@
 .debug {
     border: 1px solid red;
 }
+
+.input-label {
+    @apply font-medium
+}

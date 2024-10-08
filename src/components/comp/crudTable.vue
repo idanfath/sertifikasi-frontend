@@ -40,14 +40,15 @@
                 </div>
                 <div :class="col.class" v-if="col.currency">
                     {{
-                        new Intl.NumberFormat('id-ID', {
+                        slotProps.data[col.field] ? new Intl.NumberFormat('id-ID', {
                             style: 'currency', currency: 'IDR'
-                        }).format(slotProps.data[col.field])
+                        }).format(slotProps.data[col.field]) : col.null
                     }}
                 </div>
                 <div v-html="col.innerHtml" :class="col.class" v-if="col.innerHtml" />
                 <div :class="col.class" v-if="!col.date && !col.currency && !col.innerHtml">
-                    {{ getNestedProperty(slotProps.data, col.field) }}
+                    {{ getNestedProperty(slotProps.data, col.field) === null ? "-" : getNestedProperty(slotProps.data,
+                        col.field) }}
                 </div>
             </template>
         </Column>
@@ -72,7 +73,8 @@
         </template>
     </DataTable>
 
-    <comp-modal :isOpen="table.edit._editmode" title="Edit Data" @close="toggleEditMode" @confirm="commitEdit">
+    <comp-modal :isOpen="table.edit._editmode" title="Edit Data" :modalClass="modalClass" @close="toggleEditMode"
+        @confirm="commitEdit">
         <slot name="edit-modal" :data="table.edit.edit">
         </slot>
     </comp-modal>
@@ -82,6 +84,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
 
 export default {
     name: 'crudTable',
+
     data() {
         return {
             table: {
@@ -100,6 +103,10 @@ export default {
         }
     },
     props: {
+        modalClass: {
+            type: String,
+            default: ''
+        },
         columns: {
             type: Array,
             required: true,

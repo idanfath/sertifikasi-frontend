@@ -81,6 +81,6 @@ import getLocalData from './stores/subscriber/onrefresh'
  * @returns {Promise} A promise that resolves when local data is fetched.
  */
 getLocalData().then(() => {
-    app.use(router) //TERNYATA HARUS TARO SINI COKKK BIAR GAK ERROR AOWKDOAWKDOAWKDOAWKDOAWKDA
+    app.use(router) //.TERNAYTA HARUS TARO SINI COKKK BIAR GAK ERROR AOWKDOAWKDOAWKDOAWKDOAWKDA
     app.mount('#app')
 })

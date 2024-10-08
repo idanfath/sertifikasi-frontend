@@ -192,11 +192,6 @@ export default {
                     to: 'products',
                 },
                 {
-                    label: 'Add Products',
-                    icon: 'pi pi-plus',
-                    to: 'add products',
-                },
-                {
                     label: 'History',
                     icon: 'pi pi-history',
                     to: 'transaction',
@@ -207,9 +202,9 @@ export default {
                     to: 'add transaction',
                 },
                 {
-                    label: 'Register',
-                    icon: 'pi pi-user-plus',
-                    to: 'register',
+                    label: 'Promo',
+                    icon: 'pi pi-tags',
+                    to: 'promo',
                     admin: true,
                 },
                 {

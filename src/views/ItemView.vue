@@ -1,8 +1,7 @@
 <template>
-    <comp-crud-table model="item" :columns="columns" :hideEdit="false">
+    <comp-crud-table ref="crudTable" model="item" :columns="columns" :hideEdit="false">
         <template #toolbar-start>
-            <Button label="Add New" class="mr-2" icon="pi pi-plus-circle" size="small"
-                @click="$router.push({ name: 'add products' })" />
+            <Button label="Add New" class="mr-2" icon="pi pi-plus-circle" size="small" @click="toggleAdd" />
         </template>
         <template #edit-modal="{ data }">
             <div class="flex flex-col gap-2">
@@ -48,20 +47,142 @@
         </template>
     </comp-crud-table>
 
+    <comp-modal :isOpen="modal.add" @close="toggleAdd" modalClass="!w-full" @confirm="confirmSubmit"
+        :disabledConfirm="sku_taken || isLoading || v$.$invalid">
+        <div>
+            <label for="name" class="block  font-semibold  text-gray-700">Name</label>
+            <InputText fluid v-model="form.name" id="name" placeholder="Product name" />
+        </div>
+        <div class="mt-2">
+            <label for="price" class="block  font-semibold  text-gray-700">Price</label>
+            <InputNumber fluid v-model="form.price" showButtons :step="1000" id="price" mode="currency" currency="IDR"
+                locale="id-ID" />
+        </div>
+        <div class="mt-2">
+            <label for="amount" class="block  font-semibold  text-gray-700">Stock</label>
+            <InputNumber fluid v-model="form.stock" id="amount" showButtons :min="1" suffix=" pcs" />
+        </div>
+        <div class="mt-2">
+            <label for="sku" class="block  font-semibold  text-gray-700">SKU</label>
+            <InputText fluid v-model="form.sku" id="sku" :placeholder="slugify(form.name) || 'Product SKU'" />
+            <div v-if="sku_taken" class="text-red-500 text-sm">SKU already taken</div>
+        </div>
 
+
+    </comp-modal>
 </template>
 
 <script>
 export default {
     data() {
         return {
+            modal: {
+                add: false
+            },
             columns: [
                 { field: 'name', header: 'Nama' },
                 { field: 'stock', header: 'Stock' },
                 { field: 'sku', header: 'SKU' },
                 { field: 'price', header: 'Harga', currency: true },
             ],
+            form: {
+                name: '',
+                price: 1000,
+                stock: 1,
+                sku: '',
+            },
+            v$: useVuelidate(),
+            sku_taken: false,
+            isLoading: false,
         }
     },
+    computed: {
+        slugify() {
+            return (text) => {
+                return text
+                    .toString()
+                    .toLowerCase()
+                    .trim()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w-]+/g, '')
+                    .replace(/--+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '')
+            }
+        },
+    },
+    methods: {
+        toggleAdd() {
+            this.modal.add = !this.modal.add
+        },
+        async skuCheck(sku) {
+            if (sku) {
+                const response = await axios.get(`/skucheck/${sku}`)
+                this.sku_taken = response.data.data
+                this.isLoading = false;
+                return
+            }
+            this.sku_taken = false;
+            this.isLoading = false;
+        },
+        onReset() {
+            this.form = { ...this.reset };
+            this.v$.$touch();
+        },
+        confirmSubmit(event) {
+            const submitForm = { ...this.form };
+            submitForm.sku = this.slugify(submitForm.sku) || this.slugify(submitForm.name);
+
+            axios.post('/item', submitForm).then(() => {
+                uptoast(this.$toast).preset('success')
+                this.onReset();
+                this.v$.$touch();
+                this.$refs.crudTable.onLoad();
+            }).catch(() => {
+                uptoast(this.$toast).preset('error')
+            }).finally(() => {
+                this.isLoading = false;
+            })
+
+        },
+
+    },
+    mounted() {
+        this.reset = { ...this.form };
+        this.v$.$touch();
+    },
+    watch: {
+        'form.sku': {
+            handler: function (val) {
+                this.isLoading = true;
+                this.skuCheck(this.slugify(val));
+                clearTimeout(this.debounceTimeout);
+                this.debounceTimeout = setTimeout(() => {
+                    this.skuCheck(this.slugify(val));
+                }, 500);
+            },
+            deep: true,
+        },
+        'form.name': {
+            handler: function (val) {
+                this.isLoading = true;
+                clearTimeout(this.debounceTimeout);
+                this.debounceTimeout = setTimeout(() => {
+                    this.skuCheck(this.slugify(val));
+                }, 500);
+            },
+            deep: true,
+        },
+    },
+    validations() {
+        return {
+            form: {
+                name: { required },
+                price: { required, numeric },
+                stock: { required, numeric, minValue: minValue(1) },
+            }
+        }
+    },
+
 }
 </script>

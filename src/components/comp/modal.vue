@@ -1,7 +1,7 @@
 <template>
     <transition name="modal-fade">
         <div v-if="isOpen" class="modal-overlay" @click="closeModal('backdrop')">
-            <div class="modal-container" :class="modalClass" @click.stop>
+            <div class="modal-container flex flex-col" :class="[{ 'modal-glass': glassMode }, modalClass]" @click.stop>
                 <div class="modal-header">
                     <slot name="header">
                         <h2 class="modal-title">{{ title }}</h2>
@@ -10,7 +10,7 @@
                         </x-button>
                     </slot>
                 </div>
-                <div class="modal-content">
+                <div class="modal-content overflow-hidden overflow-y-scroll">
                     <slot>
                         <!-- Default content, override by placing content here -->
                     </slot>
@@ -18,7 +18,8 @@
                 <div class="modal-footer flex gap-1" :class="{ 'flex-row-reverse': alignLeft }">
                     <x-button v-if="!hideCancel" secondary @clicked="closeModal('cancel')"
                         :class="{ 'order-2': swapButtons }">{{ closeLabel }}</x-button>
-                    <x-button v-if="!hideConfirm" :disabled="disabledConfirm" @clicked="confirmAction">{{ confirmLabel
+                    <x-button v-if="!hideConfirm" :useLoading="useLoading" :disabled="disabledConfirm"
+                        @clicked="confirmAction">{{ confirmLabel
                         }}</x-button>
                 </div>
             </div>
@@ -83,18 +84,29 @@ export default {
         disabledConfirm: {
             type: Boolean,
             default: false
-        }
+        },
+        useLoading: {
+            type: Boolean,
+            default: false
+        },
+        glassMode: {
+            type: Boolean,
+            default: false
+        },
     },
     methods: {
         closeModal(from) {
             if (this.persistent && from === 'backdrop') {
                 return;
             }
-
             this.$emit('close')
         },
-        confirmAction() {
-            this.$emit('confirm')
+        confirmAction(resolveLoading) {
+            if (this.useLoading) {
+                this.$emit('confirm', resolveLoading)
+            } else {
+                this.$emit('confirm')
+            }
             this.closeModal()
         }
     }
@@ -111,7 +123,12 @@ export default {
 }
 
 .modal-container {
-    @apply bg-white rounded-lg shadow-xl w-full max-w-md mx-4 max-h-screen overflow-hidden overflow-y-scroll transform transition-all duration-300 ease-out;
+    @apply bg-white lg:rounded-lg py-5 px-3 shadow-xl lg:max-w-[50vw] lg:max-h-[90vh] max-h-screen transform transition-all duration-300 ease-out;
+}
+
+.modal-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
 }
 
 .modal-header {
@@ -139,31 +156,31 @@ export default {
 
 .modal-fade-enter-active,
 .modal-fade-leave-active {
-    @apply transition-opacity duration-300 ease-out;
+    @apply lg:transition-opacity lg:duration-300 lg:ease-out;
 }
 
 .modal-fade-enter-from,
 .modal-fade-leave-to {
-    @apply opacity-0;
+    @apply lg:opacity-0;
 }
 
 .modal-fade-enter-to,
 .modal-fade-leave-from {
-    @apply opacity-100;
+    @apply lg:opacity-100;
 }
 
 .modal-fade-enter-active .modal-container,
 .modal-fade-leave-active .modal-container {
-    @apply transition-all duration-300 ease-out;
+    @apply lg:transition-all lg:duration-300 lg:ease-out;
 }
 
 .modal-fade-enter-from .modal-container,
 .modal-fade-leave-to .modal-container {
-    @apply opacity-0 scale-95;
+    @apply lg:opacity-0 lg:scale-95;
 }
 
 .modal-fade-enter-to .modal-container,
 .modal-fade-leave-from .modal-container {
-    @apply opacity-100 scale-100;
+    @apply lg:opacity-100 lg:scale-100;
 }
 </style>

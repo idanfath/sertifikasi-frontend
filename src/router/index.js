@@ -9,18 +9,22 @@ import mainShell from '@/shell/mainShell.vue'
 import ItemView from '@/views/ItemView.vue'
 import { useAuthStore } from '@/stores/auth'
 import TransactionView from '@/views/TransactionView.vue'
-import AdditemView from '@/views/additemView.vue'
 import AddtransactionView from '@/views/addtransactionView.vue'
 import { mstr } from '@/modules/core'
-import RegisterView from '@/views/registerView.vue'
-import getLocalData from '@/stores/subscriber/onrefresh'
 import UsersView from '@/views/usersView.vue'
+import CouponsView from '@/views/couponsView.vue'
 /**
  * Create a new router instance.
  */
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
+        {
+            path: "/coupons",
+            name: "coupons",
+            component: () => import('../views/couponsView.vue')
+        },
+
         {
             path: '/',
             meta: { shell: true, auth: true },
@@ -47,21 +51,16 @@ export const router = createRouter({
                     component: AddtransactionView
                 },
                 {
-                    path: "item/add",
-                    name: "add products",
-                    component: AdditemView
-                },
-                {
-                    path: "users/add",
-                    name: "register",
-                    meta: { admin: true },
-                    component: RegisterView
-                },
-                {
                     path: "users",
                     name: "users",
                     meta: { admin: true },
                     component: UsersView
+                },
+                {
+                    path: "promo",
+                    name: "promo",
+                    meta: { admin: true },
+                    component: CouponsView
                 },
             ]
         },

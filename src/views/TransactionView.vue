@@ -17,6 +17,18 @@
                 <div>{{ detailData.invoice }}</div>
             </div>
             <div class="flex  justify-between">
+                <div class="font-semibold">Subtotal</div>
+                <div>{{
+                    Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(detailData.subtotal) }}
+                </div>
+            </div>
+            <div class="flex  justify-between">
+                <div class="font-semibold">Discount</div>
+                <div>{{
+                    Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(detailData.discount) }}
+                </div>
+            </div>
+            <div class="flex  justify-between">
                 <div class="font-semibold">Total</div>
                 <div>{{
                     Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(detailData.total) }}</div>
@@ -35,6 +47,10 @@
             <div class="flex  justify-between">
                 <div class="font-semibold">Cashier</div>
                 <div>{{ detailData.user.username }}</div>
+            </div>
+            <div v-if="detailData.coupon" class="flex  justify-between">
+                <div class="font-semibold">Coupon</div>
+                <div>{{ detailData.coupon.code || '-' }}</div>
             </div>
             <div class="flex ">
                 <div class="font-semibold">Items</div>
@@ -77,7 +93,9 @@ export default {
         return {
             columns: [
                 { field: 'user.username', header: 'Cashier' },
+                { field: 'subtotal', header: 'Subotal', currency: true },
                 { field: 'total', header: 'Total', currency: true },
+                { field: 'discount', header: 'Discount', currency: true },
                 { field: 'paid_amount', header: 'Paid Amount', currency: true },
                 { field: 'change', header: 'Change', currency: true },
             ],
@@ -90,8 +108,7 @@ export default {
     methods: {
         ToggleDetailModal(data) {
             if (data) {
-                this.detailData = { ...data }
-                this.detailData.items = data.items
+                this.detailData = data
                 this.isDetailVisible = true
                 return
             }
